@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using Plugin.DeviceInfo;
 
-namespace MonkeyChat
+namespace MonkeyChat.Messaging.Twilio
 {
     public static class TwilioHelper
     {
@@ -15,7 +12,7 @@ namespace MonkeyChat
         {
             var id = CrossDeviceInfo.Current.Id;
 
-            var tokenEndpoint = $"https://xamarinchat.azurewebsites.net/token?device={id}";
+            var tokenEndpoint = $"http://cc734b62.ngrok.io/token?device={id}";
 
             var http = new HttpClient();
             var data = await http.GetStringAsync(tokenEndpoint);

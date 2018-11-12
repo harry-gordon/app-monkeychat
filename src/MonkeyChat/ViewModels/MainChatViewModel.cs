@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmHelpers;
 using Plugin.Geolocator;
 using Xamarin.Forms;
 using System.Globalization;
+using MonkeyChat.Messaging;
 
 namespace MonkeyChat
 {
@@ -18,7 +13,7 @@ namespace MonkeyChat
     {
 
         public ObservableRangeCollection<Message> Messages { get; }
-        ITwilioMessenger twilioMessenger;
+        IMessenger _messenger;
 
         string outgoingText = string.Empty;
 
@@ -36,7 +31,7 @@ namespace MonkeyChat
         public MainChatViewModel()
         {
             // Initialize with default values
-            twilioMessenger = DependencyService.Get<ITwilioMessenger>();
+            _messenger = DependencyService.Get<IMessenger>();
 
 
 
@@ -54,7 +49,7 @@ namespace MonkeyChat
 
                 Messages.Add(message);
 
-                twilioMessenger?.SendMessage(message.Text);
+                _messenger?.SendMessage(message.Text);
 
                 OutGoingText = string.Empty;
             });
@@ -64,7 +59,7 @@ namespace MonkeyChat
             {
                 try
                 {
-                    var local = await CrossGeolocator.Current.GetPositionAsync(10000);
+                    var local = await CrossGeolocator.Current.GetPositionAsync(TimeSpan.FromSeconds(10));
                     var map = $"https://maps.googleapis.com/maps/api/staticmap?center={local.Latitude.ToString(CultureInfo.InvariantCulture)},{local.Longitude.ToString(CultureInfo.InvariantCulture)}&zoom=17&size=400x400&maptype=street&markers=color:red%7Clabel:%7C{local.Latitude.ToString(CultureInfo.InvariantCulture)},{local.Longitude.ToString(CultureInfo.InvariantCulture)}&key=";
 
                     var message = new Message
@@ -76,7 +71,7 @@ namespace MonkeyChat
                     };
 
                     Messages.Add(message);
-                    twilioMessenger?.SendMessage("attach:" + message.AttachementUrl);
+                    _messenger?.SendMessage("attach:" + message.AttachementUrl);
 
                 }
                 catch (Exception ex)
@@ -86,10 +81,10 @@ namespace MonkeyChat
             });
 
 
-            if (twilioMessenger == null)
+            if (_messenger == null)
                 return;
             
-            twilioMessenger.MessageAdded = (message) =>
+            _messenger.MessageAdded = (message) =>
             {
                 Messages.Add(message);
             };                      

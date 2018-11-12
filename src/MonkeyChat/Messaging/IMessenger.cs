@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace MonkeyChat
+namespace MonkeyChat.Messaging
 {
-    public interface ITwilioMessenger
+    public interface IMessenger
     {
         Task<bool> InitializeAsync();
 

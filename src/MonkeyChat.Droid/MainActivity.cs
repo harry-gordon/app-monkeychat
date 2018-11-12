@@ -1,12 +1,11 @@
-﻿using System;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content.PM;
 using Android.OS;
 using ImageCircle.Forms.Plugin.Droid;
+using MonkeyChat.Messaging;
+using MonkeyChat.Messaging.SendBird;
 using Xamarin.Forms.Platform.Android;
 using Xamarin.Forms;
-
 
 namespace MonkeyChat.Droid
 {
@@ -23,7 +22,7 @@ namespace MonkeyChat.Droid
             Xamarin.FormsMaps.Init(this, bundle);
             ImageCircleRenderer.Init();
 
-            DependencyService.Register<ITwilioMessenger, TwilioMessenger>();
+            DependencyService.Register<IMessenger, SendBirdMessenger>();
 
             LoadApplication(new App());
         }

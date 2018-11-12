@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Windows.Input;
+using MonkeyChat.Messaging;
 using MvvmHelpers;
 using Xamarin.Forms;
 
@@ -7,7 +7,7 @@ namespace MonkeyChat
 {
     public class RoomsViewModel : BaseViewModel
     {
-        ITwilioMessenger twilioMessenger;
+        IMessenger _messenger;
 
         public Command ConnectCommand { get; }
 
@@ -16,7 +16,7 @@ namespace MonkeyChat
         public RoomsViewModel(Page page)
         {
             this.page = page;
-            twilioMessenger = DependencyService.Get<ITwilioMessenger>();
+            _messenger = DependencyService.Get<IMessenger>();
 
             ConnectCommand = new Command(async () =>
             {
@@ -25,7 +25,7 @@ namespace MonkeyChat
                 try
                 {
                     IsBusy = true;
-                    success = await twilioMessenger.InitializeAsync();
+                    success = await _messenger.InitializeAsync();
                 }
                 catch (Exception ex)
                 {

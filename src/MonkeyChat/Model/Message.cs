@@ -1,6 +1,6 @@
 ﻿using System;
-using MvvmHelpers;
 using Humanizer;
+using MvvmHelpers;
 
 namespace MonkeyChat
 {

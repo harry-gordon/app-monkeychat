@@ -153,3 +153,5 @@ $RECYCLE.BIN/
 
 #Nuget
 packages/
+src/MonkeyChat/libraries/SendBird/
+src/.vs/MonkeyChat/v15/Server/
