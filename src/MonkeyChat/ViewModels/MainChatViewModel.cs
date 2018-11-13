@@ -85,8 +85,11 @@ namespace MonkeyChat
             _messenger.MessagesAdded = (messages) =>
             {
                 Messages.AddRange(messages);
-            };
+            };            
+        }
 
+        public void LoadPrevMessages()
+        {
             _messenger.LoadPrevMessages();
         }
 

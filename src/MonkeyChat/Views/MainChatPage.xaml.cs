@@ -1,4 +1,6 @@
-﻿using Xamarin.Forms;
+﻿using System;
+using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace MonkeyChat
 {
@@ -13,9 +15,21 @@ namespace MonkeyChat
 
             vm.Messages.CollectionChanged += (sender, e) =>
             {
+                UpdateScroll();
+            };
+
+            vm.LoadPrevMessages();
+        }
+
+        private void UpdateScroll()
+        {
+            // TODO: Hack to make we scroll to the most recent message
+            Task.Factory.StartNew(() =>
+            {
+                System.Threading.Thread.Sleep(1000);
                 var target = vm.Messages[vm.Messages.Count - 1];
                 MessagesListView.ScrollTo(target, ScrollToPosition.End, true);
-            };
+            });            
         }
 
         void MyListView_OnItemSelected(object sender, SelectedItemChangedEventArgs e)
