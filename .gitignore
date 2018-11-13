@@ -157,3 +157,4 @@ src/MonkeyChat/libraries/SendBird/
 src/.vs/MonkeyChat/v15/Server/
 src/.vs/MonkeyChat/DesignTimeBuild/.dtbcache
 src/.vs/MonkeyChat/v15/sqlite3/
+src/MonkeyChat/App.config
