@@ -54,7 +54,7 @@ namespace MonkeyChat
                 try
                 {
                     var local = await CrossGeolocator.Current.GetPositionAsync(TimeSpan.FromSeconds(10));
-                    var map = $"https://maps.googleapis.com/maps/api/staticmap?center={local.Latitude.ToString(CultureInfo.InvariantCulture)},{local.Longitude.ToString(CultureInfo.InvariantCulture)}&zoom=17&size=400x400&maptype=street&markers=color:red%7Clabel:%7C{local.Latitude.ToString(CultureInfo.InvariantCulture)},{local.Longitude.ToString(CultureInfo.InvariantCulture)}&key=";
+                    var map = $"https://maps.googleapis.com/maps/api/staticmap?center={local.Latitude.ToString(CultureInfo.InvariantCulture)},{local.Longitude.ToString(CultureInfo.InvariantCulture)}&zoom=17&size=400x400&maptype=street&markers=color:red%7Clabel:%7C{local.Latitude.ToString(CultureInfo.InvariantCulture)},{local.Longitude.ToString(CultureInfo.InvariantCulture)}&key=AIzaSyBtddBxZRZp578W7NtGLj_7hLOTEiIyp4w";
 
                     var message = new Message
                     {
@@ -63,7 +63,7 @@ namespace MonkeyChat
                         IsIncoming = false,
                         MessageDateTime = DateTime.Now
                     };
-
+                    
                     Messages.Add(message);
                     _messenger?.SendMessage("attach:" + message.AttachementUrl);
 

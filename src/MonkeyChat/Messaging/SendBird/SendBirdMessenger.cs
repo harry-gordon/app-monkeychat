@@ -110,14 +110,24 @@ namespace MonkeyChat.Messaging.SendBird
         private Message BuildMessage(BaseMessage baseMessage)
         {
             if (baseMessage is UserMessage userMessage)
-            {
-                return new Message
+            {      
+                var messageText = userMessage.Message;
+                
+                var message = new Message
                 {
                     UserId = userMessage.Sender.UserId,
                     IsIncoming = userMessage.Sender.UserId != GetUserId(),
                     MessageDateTime = DateTime.FromFileTime(userMessage.CreatedAt),
-                    Text = userMessage.Message
+                    Text = messageText
                 };
+
+                if (messageText.StartsWith("attach:", StringComparison.InvariantCulture))
+                {
+                    message.Text = "I am here";
+                    message.AttachementUrl = messageText.Replace("attach:", string.Empty);
+                }
+
+                return message;
             }
 
             return new Message

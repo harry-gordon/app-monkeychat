@@ -68,7 +68,7 @@ namespace MonkeyChat.Droid
 
         public async Task LoadPrevMessages()
         {
-            // Twilio Xamarin SDK doesn't support this AFAIK
+            // Twilio Xamarin SDK doesn't support this
         }
 
         async Task<bool> SetupAsync()
