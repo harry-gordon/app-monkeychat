@@ -13,8 +13,8 @@ namespace MonkeyChat.Messaging.SendBird
         {
             Init();
 
-            Connect();
-            CreateAndEnterChannel("general");
+            await Connect();
+            await CreateAndEnterChannel("general");
 
             return await Task.FromResult(true);
         }
@@ -26,21 +26,25 @@ namespace MonkeyChat.Messaging.SendBird
             // api token? c62b7c19c7d8bc4ee5b3bf68050e5b789fc52c1c
         }
 
-        private async void Connect()
+        private async Task Connect()
         {
+            Console.WriteLine($"SendBird: Connecting...");
             var tcs = new TaskCompletionSource<SendBirdException>();
 
             var userId = CrossDeviceInfo.Current.Id;
             SendBirdClient.Connect(userId, (user, ex) =>
             {
+                Console.WriteLine($"SendBird: Connected with ID {userId}");
                 tcs.SetResult(ex);
             });
 
             HandleException(await tcs.Task);
         }
 
-        private async void CreateAndEnterChannel(string channel)
+        private async Task CreateAndEnterChannel(string channel)
         {
+            Console.WriteLine($"SendBird: Attempting to join channel...");
+
             await CreateChannel(channel);
             await EnterChannel();
         }
@@ -50,6 +54,7 @@ namespace MonkeyChat.Messaging.SendBird
             var tcs = new TaskCompletionSource<SendBirdException>();
 
             OpenChannel.CreateChannel(channel, null, null, (openChannel, ex) => {
+                Console.WriteLine($"SendBird: Created channel \"{openChannel.Name}\"");
                 _channel = openChannel;
                 tcs.SetResult(ex);
             });
@@ -63,6 +68,7 @@ namespace MonkeyChat.Messaging.SendBird
 
             _channel.Enter(ex => {
                 // TODO: Exit the channel later
+                Console.WriteLine($"SendBird: Entered channel \"{_channel.Name}\"");
                 tcs.SetResult(ex);
             });
 
@@ -71,7 +77,7 @@ namespace MonkeyChat.Messaging.SendBird
 
         public void SendMessage(string text)
         {
-            _channel.SendUserMessage(text, null, (userMessage, e) =>
+            _channel.SendUserMessage(text, string.Empty, (userMessage, e) =>
             {
                 // TODO: Handle this better
                 HandleException(e);
@@ -80,7 +86,11 @@ namespace MonkeyChat.Messaging.SendBird
 
         private void HandleException(SendBirdException ex)
         {
-            System.Diagnostics.Debug.WriteLine($"SendBird Exception: {ex.Message}");
+            if (ex != null)
+            {
+                Console.WriteLine($"SendBird: Exception: {ex.Message}");
+                throw ex;
+            }
         }
 
         public Action<Message> MessageAdded { get; set; }
