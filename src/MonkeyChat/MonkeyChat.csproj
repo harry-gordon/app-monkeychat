@@ -14,6 +14,9 @@
     <PackageReference Include="Xamarin.Forms" Version="3.3.0.967583" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Build.Tasks.v4.0">
+      <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\Microsoft.Build.Tasks.v4.0.dll</HintPath>
+    </Reference>
     <Reference Include="SendBird">
       <HintPath>libraries\SendBird\SendBird.dll</HintPath>
     </Reference>

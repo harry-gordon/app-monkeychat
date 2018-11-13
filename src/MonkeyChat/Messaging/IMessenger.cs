@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MonkeyChat.Messaging
@@ -9,9 +10,13 @@ namespace MonkeyChat.Messaging
 
         Task<bool> Close();
 
+        Task LoadPrevMessages();
+
         void SendMessage(string text);
 
         Action<Message> MessageAdded { get; set; }
+
+        Action<List<Message>> MessagesAdded { get; set; }
     }
 }
 

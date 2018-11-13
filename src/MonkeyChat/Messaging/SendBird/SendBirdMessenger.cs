@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Plugin.DeviceInfo;
 using SendBird;
@@ -10,6 +12,7 @@ namespace MonkeyChat.Messaging.SendBird
         private OpenChannel _channel = null;
 
         public Action<Message> MessageAdded { get; set; }
+        public Action<List<Message>> MessagesAdded { get; set; }
 
         public async Task<bool> Initialize()
         {
@@ -23,10 +26,19 @@ namespace MonkeyChat.Messaging.SendBird
 
         public async Task<bool> Close()
         {
+            // TODO: Unsubscribe from messages
+
             await LeaveChannel();
             await Disconnect();
 
             return true;
+        }
+
+        public async Task LoadPrevMessages()
+        {
+            if (_channel == null) return;
+
+            await FetchChannelMessages(_channel);
         }
 
         private void InitSendBird()
@@ -61,22 +73,72 @@ namespace MonkeyChat.Messaging.SendBird
             await tcs.Task;
         }
 
-        private async Task CreateAndEnterChannel(string channelId)
+        private async Task CreateAndEnterChannel(string channelName)
         {
             Console.WriteLine($"SendBird: Attempting to join channel...");
 
-            var channel = await GetOrCreateChannel(channelId);
+            var channel = await GetOrCreateChannel(channelName);
             await EnterChannel(channel);
 
             SubscribeToMessages();
         }
 
-        private async Task<OpenChannel> GetOrCreateChannel(string channelId)
+        private async Task FetchChannelMessages(OpenChannel channel)
+        {
+            var tcs = new TaskCompletionSource<SendBirdException>();
+
+            var prevMessageListQuery = channel.CreatePreviousMessageListQuery();
+            prevMessageListQuery.Load(30, false, (messages, ex) =>
+            {
+                HandleMessages(messages);
+                tcs.SetResult(ex);
+            });
+
+            HandleException(await tcs.Task);
+        }
+
+        private void HandleMessage(BaseMessage baseMessage)
+        {
+            MessageAdded.Invoke(BuildMessage(baseMessage));
+        }
+
+        private void HandleMessages(List<BaseMessage> baseMessages)
+        {
+            MessagesAdded.Invoke(baseMessages.Select(BuildMessage).ToList());
+        }
+
+        private Message BuildMessage(BaseMessage baseMessage)
+        {
+            if (baseMessage is UserMessage userMessage)
+            {
+                return new Message
+                {
+                    IsIncoming = userMessage.Sender.UserId != GetUserId(),
+                    MessageDateTime = DateTime.FromFileTime(userMessage.CreatedAt),
+                    Text = userMessage.Message
+                };
+            }
+
+            return new Message
+            {
+                IsIncoming = true,
+                MessageDateTime = DateTime.FromFileTime(baseMessage.CreatedAt),
+                Text = "[unhandled message]"
+            };
+        }
+
+        private async Task<OpenChannel> GetOrCreateChannel(string channelName)
+        {
+            var channel = await GetChannel(channelName) ?? await CreateChannel(channelName);
+            return channel;
+        }
+
+        private async Task<OpenChannel> CreateChannel(string channelName)
         {
             var tcs = new TaskCompletionSource<SendBirdException>();
             OpenChannel channel = null;
 
-            OpenChannel.CreateChannel(channelId, null, null, (openChannel, ex) => {
+            OpenChannel.CreateChannel(channelName, null, null, (openChannel, ex) => {
                 Console.WriteLine($"SendBird: Created channel \"{openChannel.Name}\"");
                 channel = openChannel;
                 tcs.SetResult(ex);
@@ -84,6 +146,29 @@ namespace MonkeyChat.Messaging.SendBird
 
             HandleException(await tcs.Task);
             return channel;
+        }
+
+        private async Task<OpenChannel> GetChannel(string channelName)
+        {
+            var channels = await GetChannels(channelName);
+            return channels.FirstOrDefault(c => c.Name == channelName);
+        }
+
+        private async Task<List<OpenChannel>> GetChannels(string channelName = null)
+        {
+            var tcs = new TaskCompletionSource<SendBirdException>();
+
+            var result = new List<OpenChannel>();
+            var channelListQuery = OpenChannel.CreateOpenChannelListQuery();
+            channelListQuery.NameKeyword = channelName;
+            channelListQuery.Next((channels, ex) =>
+            {
+                result = channels;
+                tcs.SetResult(ex);
+            });
+
+            HandleException(await tcs.Task);
+            return result;
         }
 
         private async Task EnterChannel(OpenChannel channel)
@@ -119,15 +204,7 @@ namespace MonkeyChat.Messaging.SendBird
             var handler = new SendBirdClient.ChannelHandler();
             handler.OnMessageReceived = (baseChannel, baseMessage) =>
             {
-                if (baseMessage is UserMessage userMessage)
-                {
-                    MessageAdded.Invoke(new Message
-                    {
-                        IsIncoming = userMessage.Sender.UserId != GetUserId(),
-                        MessageDateTime = DateTime.FromFileTime(userMessage.CreatedAt),
-                        Text = userMessage.Message
-                    });
-                }
+                HandleMessage(baseMessage);
             };
             SendBirdClient.AddChannelHandler(id, handler);
         }

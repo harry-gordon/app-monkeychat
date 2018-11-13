@@ -17,6 +17,7 @@ namespace MonkeyChat.Droid
         public static IChannel GeneralChannel { get; private set; }
 
         public Action<Message> MessageAdded { get; set; }
+        public Action<List<Message>> MessagesAdded { get; set; }
 
         public void SendMessage(string text)
         {
@@ -63,6 +64,11 @@ namespace MonkeyChat.Droid
         public Task<bool> Close()
         {
             return Task.FromResult(true);
+        }
+
+        public async Task LoadPrevMessages()
+        {
+            // Twilio Xamarin SDK doesn't support this AFAIK
         }
 
         async Task<bool> SetupAsync()

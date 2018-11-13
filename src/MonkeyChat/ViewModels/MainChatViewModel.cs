@@ -76,13 +76,19 @@ namespace MonkeyChat
 
             if (_messenger == null)
                 return;
-            
+
             _messenger.MessageAdded = (message) =>
             {
                 Messages.Add(message);
-            };                      
-        }
+            };
 
+            _messenger.MessagesAdded = (messages) =>
+            {
+                Messages.AddRange(messages);
+            };
+
+            _messenger.LoadPrevMessages();
+        }
 
         public void InitializeMock()
         {
