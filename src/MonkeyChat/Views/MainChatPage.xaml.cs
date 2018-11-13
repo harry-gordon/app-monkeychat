@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
 namespace MonkeyChat
 {
@@ -17,13 +11,11 @@ namespace MonkeyChat
             Title = "#general";
             BindingContext = vm =  new MainChatViewModel();
 
-
             vm.Messages.CollectionChanged += (sender, e) =>
             {
                 var target = vm.Messages[vm.Messages.Count - 1];
                 MessagesListView.ScrollTo(target, ScrollToPosition.End, true);
             };
-           
         }
 
         void MyListView_OnItemSelected(object sender, SelectedItemChangedEventArgs e)
@@ -34,7 +26,6 @@ namespace MonkeyChat
         void MyListView_OnItemTapped(object sender, ItemTappedEventArgs e)
         {
             MessagesListView.SelectedItem = null;
-
         }
     }
 }

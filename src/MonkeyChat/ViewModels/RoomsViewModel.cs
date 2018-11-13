@@ -25,7 +25,7 @@ namespace MonkeyChat
                 try
                 {
                     IsBusy = true;
-                    success = await _messenger.InitializeAsync();
+                    success = await _messenger.Initialize();
                 }
                 catch (Exception ex)
                 {

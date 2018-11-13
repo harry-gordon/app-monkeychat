@@ -11,7 +11,6 @@ namespace MonkeyChat
 {
     public class MainChatViewModel : BaseViewModel
     {
-
         public ObservableRangeCollection<Message> Messages { get; }
         IMessenger _messenger;
 
@@ -25,16 +24,13 @@ namespace MonkeyChat
 
         public ICommand SendCommand { get; set; }
 
-
         public ICommand LocationCommand { get; set; }
 
         public MainChatViewModel()
         {
             // Initialize with default values
             _messenger = DependencyService.Get<IMessenger>();
-
-
-
+            
             Messages = new ObservableRangeCollection<Message>();
 
             SendCommand = new Command(() =>
@@ -46,14 +42,12 @@ namespace MonkeyChat
                     MessageDateTime = DateTime.Now
                 };
 
-
                 Messages.Add(message);
 
                 _messenger?.SendMessage(message.Text);
 
                 OutGoingText = string.Empty;
             });
-
 
             LocationCommand = new Command(async () =>
             {
@@ -80,7 +74,6 @@ namespace MonkeyChat
                 }
             });
 
-
             if (_messenger == null)
                 return;
             
@@ -93,19 +86,16 @@ namespace MonkeyChat
 
         public void InitializeMock()
         {
-            Messages.ReplaceRange(new List<Message>
-                {
-                    new Message { Text = "Hi Squirrel! \uD83D\uDE0A", IsIncoming = true, MessageDateTime = DateTime.Now.AddMinutes(-25)},
-                    new Message { Text = "Hi Baboon, How are you? \uD83D\uDE0A", IsIncoming = false, MessageDateTime = DateTime.Now.AddMinutes(-24)},
-                    new Message { Text = "We've a party at Mandrill's. Would you like to join? We would love to have you there! \uD83D\uDE01", IsIncoming = true, MessageDateTime = DateTime.Now.AddMinutes(-23)},
-                    new Message { Text = "You will love it. Don't miss.", IsIncoming = true, MessageDateTime = DateTime.Now.AddMinutes(-23)},
-                    new Message { Text = "Sounds like a plan. \uD83D\uDE0E", IsIncoming = false, MessageDateTime = DateTime.Now.AddMinutes(-23)},
+            Messages.ReplaceRange(new List<Message> {
+                new Message { Text = "Hi Squirrel! \uD83D\uDE0A", IsIncoming = true, MessageDateTime = DateTime.Now.AddMinutes(-25)},
+                new Message { Text = "Hi Baboon, How are you? \uD83D\uDE0A", IsIncoming = false, MessageDateTime = DateTime.Now.AddMinutes(-24)},
+                new Message { Text = "We've a party at Mandrill's. Would you like to join? We would love to have you there! \uD83D\uDE01", IsIncoming = true, MessageDateTime = DateTime.Now.AddMinutes(-23)},
+                new Message { Text = "You will love it. Don't miss.", IsIncoming = true, MessageDateTime = DateTime.Now.AddMinutes(-23)},
+                new Message { Text = "Sounds like a plan. \uD83D\uDE0E", IsIncoming = false, MessageDateTime = DateTime.Now.AddMinutes(-23)},
 
-                    new Message { Text = "\uD83D\uDE48 \uD83D\uDE49 \uD83D\uDE49", IsIncoming = false, MessageDateTime = DateTime.Now.AddMinutes(-23)},
-
+                new Message { Text = "\uD83D\uDE48 \uD83D\uDE49 \uD83D\uDE49", IsIncoming = false, MessageDateTime = DateTime.Now.AddMinutes(-23)},
             });
         }
-
     }
     
 }

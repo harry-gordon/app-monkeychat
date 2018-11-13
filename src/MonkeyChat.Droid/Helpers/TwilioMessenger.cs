@@ -34,8 +34,7 @@ namespace MonkeyChat.Droid
             });
         }
 
-
-        public async Task<bool> InitializeAsync()
+        public async Task<bool> Initialize()
         {
             var task = new TaskCompletionSource<bool>();
             if (!TwilioIPMessagingSDK.IsInitialized)
@@ -59,6 +58,11 @@ namespace MonkeyChat.Droid
             }
 
             return await task.Task.ConfigureAwait(false);
+        }
+
+        public Task<bool> Close()
+        {
+            return Task.FromResult(true);
         }
 
         async Task<bool> SetupAsync()

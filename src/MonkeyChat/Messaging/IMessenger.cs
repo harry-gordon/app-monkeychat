@@ -5,7 +5,9 @@ namespace MonkeyChat.Messaging
 {
     public interface IMessenger
     {
-        Task<bool> InitializeAsync();
+        Task<bool> Initialize();
+
+        Task<bool> Close();
 
         void SendMessage(string text);
 
