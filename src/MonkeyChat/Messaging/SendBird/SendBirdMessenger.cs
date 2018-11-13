@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using Plugin.DeviceInfo;
@@ -44,8 +43,7 @@ namespace MonkeyChat.Messaging.SendBird
 
         private void InitSendBird()
         {
-            var apiKey = ConfigurationManager.AppSettings["SendBirdApiKey"];
-            SendBirdClient.Init(apiKey);
+            SendBirdClient.Init("4BF3A2F0-9767-446A-B771-79CF34C611E5");
         }
 
         private async Task Connect()
@@ -115,6 +113,7 @@ namespace MonkeyChat.Messaging.SendBird
             {
                 return new Message
                 {
+                    UserId = userMessage.Sender.UserId,
                     IsIncoming = userMessage.Sender.UserId != GetUserId(),
                     MessageDateTime = DateTime.FromFileTime(userMessage.CreatedAt),
                     Text = userMessage.Message

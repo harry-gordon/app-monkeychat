@@ -178,7 +178,6 @@
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\ListViewBottomEffect.cs" />
-    <Compile Include="Helpers\TwilioMessenger.cs" />
     <Compile Include="MainApplication.cs" />
   </ItemGroup>
   <ItemGroup>
